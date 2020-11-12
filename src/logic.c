@@ -152,8 +152,8 @@ AppState processAppState(AppState *currentAppState, uint32_t keysPressedBefore, 
         {
             Enemy e = enemies[n];
             //Check to see if any enemeies hit a wall before movement
-            if( !e.defeated
-                    && ((e.x < 0 && nextAppState.evx < 0) || (e.x + e.width > WIDTH && nextAppState.evx > 0)) )
+            if( !e.defeated  &&
+                ((e.x < 0 && nextAppState.evx < 0) || (e.x + e.width > WIDTH && nextAppState.evx > 0)) )
             {
                 nextAppState.evx = -nextAppState.evx;
                 movedown = 1;
@@ -181,7 +181,7 @@ AppState processAppState(AppState *currentAppState, uint32_t keysPressedBefore, 
             sprintf( player.life_representation, "Lives: %d", player.lives );
             removeBomb( &nextAppState, o );
         }
-        if( b.y > HEIGHT )
+        if( b.y > ( HEIGHT - b.height ))
         {
             removeBomb( &nextAppState, o );
         }

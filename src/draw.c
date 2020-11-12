@@ -67,7 +67,7 @@ void drawAppState(AppState *state)
     // TA-TODO: IMPLEMENT.
     Player player = state->p;
     drawString( 0, 0, player.life_representation, BLUE );
-    drawString( WIDTH - 7 * 6, 0, state->level_representation, BLUE );
+    drawString( 0, WIDTH - 7 * 6, state->level_representation, BLUE );
     for( int i = 0; i < player.num_bullets; i++ )
     {
         Projectile b = player.bullets[i];
