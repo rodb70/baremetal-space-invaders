@@ -1,78 +1,29 @@
-################################################################################
-# These are variables for the GBA toolchain build
-# You can add others if you wish to
-# ***** Spencer Kee *****
-################################################################################
+# Makefile
 
-# TA-TODO: Put your game name here.
-# The name of your desired application
-# This should be a just a name i.e MyFirstGBAGame
-# No SPACES AFTER THE NAME.
-PROGNAME = SpaceInvaders
+CROSS_COMPILE := /opt/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-
 
-# TA-TODO: Add the C files you want compiled here (replace extension with .o)
-# Here you must put a list of all of the object files
-# that will be compiled into your program. For example
-# if you have main.c and myLib.c then in the following
-# line you would put main.o and myLib.o
-OFILES = gba.o font.o draw.o logic.o main.o images/garbage.o images/player.o images/screens.o sprites/enemy.o
+COMPILER := gcc
 
-################################################################################
-# These are various settings used to make the GBA toolchain work
-# DO NOT EDIT BELOW.
-################################################################################
+#CPU := rpi1
+CPU := host
+BLD_TARGET := space-invaders
+BLD_TYPE := debug
 
-.PHONY: all
-all : CFLAGS += $(CRELEASE) -I../shared
-all : LDFLAGS += $(LDRELEASE)
-all: $(PROGNAME).gba
-	@echo "[FINISH] Created $(PROGNAME).gba"
+ifeq ($(CPU),rpi1)
+PROJ_DIRS := rpi1
+endif
+ifeq ($(CPU),host)
+PROJ_DIRS := host
+EXTRA_LIBS := -lSDL2
+SHORT_ENUMS := n
 
-include /opt/cs2110-tools/GBAVariables.mak
+endif
 
-# Son, it's time to be an adult and use adult prototypes
-CFLAGS += -Wstrict-prototypes -Wold-style-definition
+PROJ_DIRS += src
+PROJ_DIRS += sprites
+PROJ_DIRS += images
 
-debug : CFLAGS += $(CDEBUG) -I../shared
-debug : LDFLAGS += $(LDDEBUG)
-debug : $(PROGNAME).gba
-	@echo "[FINISH] Created $(PROGNAME).gba"
+include makefiles/main.mk
 
-$(PROGNAME).gba : $(PROGNAME).elf
-	@echo "[LINK] Linking objects together to create $(PROGNAME).gba"
-	@$(OBJCOPY) -O binary $(PROGNAME).elf $(PROGNAME).gba
-
-$(PROGNAME).elf : crt0.o $(GCCLIB)/crtbegin.o $(GCCLIB)/crtend.o $(GCCLIB)/crti.o $(GCCLIB)/crtn.o $(OFILES) libc_sbrk.o
-	$(CC) -o $(PROGNAME).elf $^ $(LDFLAGS)
-
-.PHONY : emu
-emu : med
-
-.PHONY : vba
-vba : CFLAGS += $(CRELEASE) -I../shared
-vba : LDFLAGS += $(LDRELEASE)
-vba : $(PROGNAME).gba
-	@echo "[EXECUTE] Running Emulator VBA-M"
-	@echo "          Please see emulator.log if this fails"
-	@vbam $(VBAOPT) $(PROGNAME).gba >emulator.log 2>&1
-
-.PHONY : med
-med : CFLAGS += $(CRELEASE) -I../shared
-med : LDFLAGS += $(LDRELEASE)
-med : $(PROGNAME).gba
-	@echo "[EXECUTE] Running emulator Mednafen"
-	@echo "          Please see emulator.log if this fails"
-# Default mednafen keybinds are "Gaaarbage", in the words of Farzam
-	@mkdir -p ~/.mednafen/
-	@cp mednafen-09x.cfg ~/.mednafen/
-	@mednafen $(MEDOPT) $(PROGNAME).gba >emulator.log 2>&1
-
-.PHONY : submit
-submit: clean
-	@rm -f submission.tar.gz
-	@tar czvf submission.tar.gz *
-
-.PHONY : clean
-clean :
-	@echo "[CLEAN] Removing all compiled files"
-	rm -f *.o *.elf *.gba *.log */*.o
+distclean:
+	rm -rf build

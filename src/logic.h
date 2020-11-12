@@ -1,7 +1,7 @@
 #ifndef LOGIC_H
 #define LOGIC_H
 
-#include "gba.h"
+#include "game.h"
 
 typedef struct {
     int x;
@@ -76,7 +76,7 @@ typedef struct {
 void initializeAppState(AppState *appState);
 
 // This function will be used to process app frames.
-AppState processAppState(AppState *currentAppState, u32 keysPressedBefore, u32 keysPressedNow);
+AppState processAppState(AppState *currentAppState, uint32_t keysPressedBefore, uint32_t keysPressedNow);
 
 void addEnemies(AppState *appState);
 void removeEnemy(AppState *appState, int i);

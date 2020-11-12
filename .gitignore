@@ -53,3 +53,5 @@ dkms.conf
 
 #misc
 .DS_Store
+/.settings/
+/build/
